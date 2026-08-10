@@ -3,338 +3,309 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Секретный Альбом</title>
+    <title>Управление клиентами и льготами</title>
     <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --accent-color: #bb86fc;
-            --error-color: #cf6679;
-        }
-
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: #f4f7f6;
+            color: #333;
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        #login-screen {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            height: 100vh;
-            background-color: var(--bg-color);
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            z-index: 100;
         }
 
-        #login-screen.hidden { display: none; }
-
-        .login-box {
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            text-align: center;
-            width: 300px;
-        }
-
-        input[type="password"], button {
+        .container {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 16px;
-        }
-
-        input[type="password"] {
-            background: #2c2c2c;
-            color: white;
-            outline: none;
-        }
-
-        button {
-            background-color: var(--accent-color);
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-
-        button:hover { background-color: #a06cd5; }
-        button:disabled { background-color: #555; cursor: not-allowed; }
-
-        #login-error {
-            color: var(--error-color);
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
-        }
-
-        #album-screen { display: none; width: 100%; max-width: 1200px; }
-        #album-screen.active { display: block; }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            border-bottom: 1px solid #333;
-            padding-bottom: 20px;
-        }
-
-        .upload-area {
-            border: 2px dashed #444;
-            padding: 30px;
-            text-align: center;
+            max-width: 700px;
+            background: #fff;
             border-radius: 10px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 30px;
-            position: relative;
-        }
-
-        .upload-area:hover { border-color: var(--accent-color); background: rgba(187, 134, 252, 0.05); }
-        .upload-area input { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
-
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .gallery-item {
-            background: var(--card-bg);
-            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             overflow: hidden;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            transition: transform 0.2s;
-            position: relative;
         }
 
-        .gallery-item:hover { transform: translateY(-5px); }
-
-        .gallery-item img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            display: block;
+        .section {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #2c3e50;
         }
 
-        .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.7);
-            color: var(--error-color);
-            border: none;
-            border-radius: 15px;
-            width: auto;
-            padding: 5px 10px;
-            cursor: pointer;
+        .form-grid {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 12px;
+            align-items: center;
+        }
+        .form-grid label {
+            text-align: right;
+            font-weight: 500;
+        }
+        .form-grid input {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-grid input:focus {
+            border-color: #3498db;
+        }
+        .btn-add {
+            grid-column: 1 / -1;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .btn-add:hover {
+            background-color: #2980b9;
+        }
+
+        .controls {
             display: flex;
             align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: 0.3s;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 6px 12px;
+            background-color: #ecf0f1;
+            color: #2c3e50;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            background-color: #bdc3c7;
+        }
+        .count-label {
+            font-weight: bold;
+            font-size: 15px;
+            margin-left: 5px;
+        }
+        .separator {
+            width: 1px;
+            height: 24px;
+            background-color: #ccc;
+            margin: 0 5px;
         }
 
-        .gallery-item:hover .delete-btn { opacity: 1; }
-
-        .loader {
-            border: 4px solid #333;
-            border-top: 4px solid var(--accent-color);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-            display: none;
+        .table-container {
+            padding: 20px;
         }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        /* Мелкая правка для мобильных */
-        @media (max-width: 600px) {
-            .header button { width: auto; padding: 10px 15px; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        /* Выравнивание колонок */
+        th:nth-child(1), td:nth-child(1) { text-align: left; }
+        th:nth-child(2), td:nth-child(2) { text-align: center; }
+        th:nth-child(3), td:nth-child(3) { text-align: right; }
+        th:nth-child(4), td:nth-child(4) { text-align: center; }
+        
+        tr:hover {
+            background-color: #f1f8ff;
+        }
+        .empty-msg {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-    <!-- Экран входа -->
-    <div id="login-screen">
-        <div class="login-box">
-            <h2>Вход в альбом 2</h2>
-            <input type="password" id="password-input" placeholder="Введите пароль">
-            <button onclick="checkPassword()">Войти</button>
-            <div id="login-error">Неверный пароль</div>
+<div class="container">
+    <!-- Фрейм для ввода данных -->
+    <div class="section">
+        <div class="section-title">Добавление клиента</div>
+        <div class="form-grid">
+            <label for="name">Имя:</label>
+            <input type="text" id="name" placeholder="Введите имя">
+
+            <label for="lgota1">Льгота 1:</label>
+            <input type="text" id="lgota1" placeholder="Введите значение (число)">
+
+            <label for="lgota2">Льгота 2:</label>
+            <input type="text" id="lgota2" placeholder="Например: 1500.50">
+
+            <label for="lgota3">Льгота 3:</label>
+            <input type="text" id="lgota3" placeholder="Введите значение (число)">
+
+            <button class="btn-add" onclick="addClient()">Добавить клиента</button>
         </div>
     </div>
 
-    <!-- Экран альбома -->
-    <div id="album-screen">
-        <div class="header">
-            <h1>Мой фотоальбом 📸</h1>
-            <button onclick="logout()" style="width: auto; background: #333; color: white;">Выйти</button>
+    <!-- Фрейм для управления -->
+    <div class="section">
+        <div class="section-title">Управление</div>
+        <div class="controls">
+            <button class="btn" onclick="updateCount()">Посчитать клиентов</button>
+            <span class="count-label" id="countLabel">Всего: 0</span>
+            
+            <div class="separator"></div>
+            
+            <button class="btn" onclick="sortClients('lgota1')">Сорт. по Льготе 1</button>
+            <button class="btn" onclick="sortClients('lgota2')">Сорт. по Льготе 2</button>
+            <button class="btn" onclick="sortClients('lgota3')">Сорт. по Льготе 3</button>
         </div>
-
-        <div class="upload-area" id="upload-area">
-            <h3>Нажмите или перетащите фотографии сюда</h3>
-            <p>Фотографии загрузятся в облако ImgBB</p>
-            <input type="file" id="file-input" multiple accept="image/*" onchange="handleFiles(this.files)">
-            <div class="loader" id="upload-loader"></div>
-        </div>
-
-        <div class="gallery" id="gallery"></div>
     </div>
 
-    <script>
-        // === НАСТРОЙКИ ===
-        const API_KEY = '6a8307442db5a174c3e97d1ab8d4f1df'; 
-        const CORRECT_PASSWORD = '1234'; // Поменяйте на свой
-        // =================
+    <!-- Фрейм для таблицы -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Имя</th>
+                    <th>Льгота 1</th>
+                    <th>Льгота 2</th>
+                    <th>Льгота 3</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <!-- Строки добавляются через JavaScript -->
+            </tbody>
+        </table>
+        <div id="emptyMsg" class="empty-msg">Список клиентов пуст</div>
+    </div>
+</div>
 
-        function checkPassword() {
-            const pass = document.getElementById('password-input').value;
-            if (pass === CORRECT_PASSWORD) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('album-screen').classList.add('active');
-                loadGallery();
-            } else {
-                const err = document.getElementById('login-error');
-                err.style.display = 'block';
-                setTimeout(() => err.style.display = 'none', 2000);
-            }
+<script>
+    // Список клиентов
+    let clients = [];
+
+    // Получение элементов формы
+    const nameInput = document.getElementById('name');
+    const lgota1Input = document.getElementById('lgota1');
+    const lgota2Input = document.getElementById('lgota2');
+    const lgota3Input = document.getElementById('lgota3');
+    
+    const tableBody = document.getElementById('tableBody');
+    const countLabel = document.getElementById('countLabel');
+    const emptyMsg = document.getElementById('emptyMsg');
+
+    function addClient() {
+        let name = nameInput.value.trim();
+        let lgota1Str = lgota1Input.value.trim();
+        let lgota2Str = lgota2Input.value.trim();
+        let lgota3Str = lgota3Input.value.trim();
+
+        // Валидация: Имя
+        if (!name) {
+            alert("Ошибка ввода: Поле 'Имя' не может быть пустым.");
+            return;
         }
 
-        function logout() {
-            document.getElementById('login-screen').classList.remove('hidden');
-            document.getElementById('album-screen').classList.remove('active');
-            document.getElementById('password-input').value = '';
+        // Валидация: Льготы (проверяем, что введены числа)
+        let lgota1 = parseFloat(lgota1Str);
+        if (isNaN(lgota1)) {
+            alert("Ошибка ввода: Льгота 1 должна быть числом.");
+            return;
         }
 
-        // Надежная функция конвертации файла в Base64 для отправки
-        function getBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
-            });
+        let lgota2 = parseFloat(lgota2Str);
+        if (isNaN(lgota2)) {
+            alert("Ошибка ввода: Льгота 2 должна быть числом.");
+            return;
         }
 
-        async function uploadToImgBB(file) {
-            try {
-                // Конвертируем файл в base64 строку
-                const base64Image = await getBase64(file);
-                
-                const formData = new FormData();
-                // Отправляем уже готовую строку, а не файл (решает проблемы с CORS на GitHub Pages)
-                formData.append('image', base64Image.split(',')[1]);
-                
-                const response = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                const data = await response.json();
-                
-                if (!data.success) {
-                    console.error('Ошибка ImgBB:', data.error);
-                    throw new Error(data.error.message || 'Ошибка API');
-                }
-                
-                return data.data.display_url;
-            } catch (error) {
-                console.error('Ошибка сети:', error);
-                throw error;
-            }
+        let lgota3 = parseFloat(lgota3Str);
+        if (isNaN(lgota3)) {
+            alert("Ошибка ввода: Льгота 3 должна быть числом.");
+            return;
         }
 
-        async function handleFiles(files) {
-            const loader = document.getElementById('upload-loader');
-            const uploadArea = document.getElementById('upload-area');
-            loader.style.display = 'block';
-            uploadArea.style.pointerEvents = 'none';
+        // Создание объекта клиента
+        let newClient = {
+            name: name,
+            lgota1: lgota1,
+            lgota2: lgota2,
+            lgota3: lgota3
+        };
 
-            let photos = [];
-            try {
-                photos = JSON.parse(localStorage.getItem('myAlbumPhotos') || '[]');
-            } catch (e) {
-                photos = [];
+        clients.push(newClient);
+
+        // Очистка полей
+        nameInput.value = '';
+        lgota1Input.value = '';
+        lgota2Input.value = '';
+        lgota3Input.value = '';
+        nameInput.focus();
+
+        renderTable();
+    }
+
+    function updateCount() {
+        countLabel.textContent = `Всего: ${clients.length}`;
+    }
+
+    function sortClients(attribute) {
+        // Сортировка (строки по алфавиту, числа по порядку)
+        clients.sort((a, b) => {
+            if (typeof a[attribute] === 'string') {
+                return a[attribute].localeCompare(b[attribute]);
             }
-
-            for (let i = 0; i < files.length; i++) {
-                try {
-                    const url = await uploadToImgBB(files[i]);
-                    photos.push(url);
-                } catch (e) {
-                    alert(`Не удалось загрузить ${files[i].name}. Проверьте консоль (F12).`);
-                }
-            }
-
-            try {
-                localStorage.setItem('myAlbumPhotos', JSON.stringify(photos));
-            } catch (e) {
-                alert('Память браузера переполнена! Удалите старые фото.');
-            }
-            
-            loader.style.display = 'none';
-            uploadArea.style.pointerEvents = 'auto';
-            document.getElementById('file-input').value = '';
-            
-            loadGallery();
-        }
-
-        function loadGallery() {
-            const gallery = document.getElementById('gallery');
-            let photos = [];
-            try {
-                photos = JSON.parse(localStorage.getItem('myAlbumPhotos') || '[]');
-            } catch (e) { photos = []; }
-            
-            gallery.innerHTML = '';
-            
-            if (photos.length === 0) {
-                gallery.innerHTML = '<p style="grid-column: 1/-1; text-align:center; color:#666;">Альбом пуст. Загрузите первую фотографию!</p>';
-                return;
-            }
-
-            photos.forEach((url, index) => {
-                const item = document.createElement('div');
-                item.className = 'gallery-item';
-                item.innerHTML = `
-                    <img src="${url}" alt="Фото ${index + 1}" loading="lazy" onerror="this.parentElement.remove()">
-                    <button class="delete-btn" onclick="deletePhoto(${index})">✕ Удалить</button>
-                `;
-                gallery.appendChild(item);
-            });
-        }
-
-        function deletePhoto(index) {
-            if(confirm('Удалить это фото из альбома?')) {
-                let photos = JSON.parse(localStorage.getItem('myAlbumPhotos') || '[]');
-                photos.splice(index, 1);
-                localStorage.setItem('myAlbumPhotos', JSON.stringify(photos));
-                loadGallery();
-            }
-        }
-
-        document.getElementById('password-input').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') checkPassword();
+            return a[attribute] - b[attribute];
         });
-    </script>
+        renderTable();
+    }
+
+    function renderTable() {
+        tableBody.innerHTML = '';
+
+        if (clients.length === 0) {
+            emptyMsg.style.display = 'block';
+        } else {
+            emptyMsg.style.display = 'none';
+        }
+
+        // Отрисовка строк таблицы
+        for (let client of clients) {
+            let row = document.createElement('tr');
+            
+            // Форматируем числа до 2 знаков после запятой
+            row.innerHTML = `
+                <td>${client.name}</td>
+                <td>${client.lgota1.toFixed(2)}</td>
+                <td>${client.lgota2.toFixed(2)}</td>
+                <td>${client.lgota3.toFixed(2)}</td>
+            `;
+            tableBody.appendChild(row);
+        }
+
+        updateCount();
+    }
+
+    // Первичная отрисовка
+    renderTable();
+</script>
+
 </body>
 </html>
